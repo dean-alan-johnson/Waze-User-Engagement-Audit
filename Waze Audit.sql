@@ -83,4 +83,5 @@ FROM dbo.waze_dataset WHERE label IS NOT NULL GROUP BY device;
 WITH DistPerc AS (SELECT *, PERCENT_RANK() OVER (ORDER BY driven_km_drives) AS p FROM dbo.waze_dataset WHERE label IS NOT NULL)
 SELECT CASE WHEN p < 0.95 THEN 'Civilian (Bottom 95%)' ELSE 'Pro (Top 5%)' END AS user_group,
        ROUND(SUM(CASE WHEN label = 'churned' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS churn_rate_pct
+
 FROM DistPerc GROUP BY CASE WHEN p < 0.95 THEN 'Civilian (Bottom 95%)' ELSE 'Pro (Top 5%)' END;
